@@ -1,0 +1,35 @@
+# Crear repo
+git init
+
+# Añadir cambios
+git add .
+
+# Commit
+git commit -m "initial commit"
+
+# Crear rama
+git checkout -b feature/backend-setup
+
+# Cambiar rama
+git checkout main
+
+# Subir a GitHub
+git push origin main
+
+#Crear entorno virtual
+python -m venv venv
+
+#Activar:
+venv\Scripts\actívate
+
+instalar FastAPI
+pip install fastapi uvicorn
+
+Ejecutar backend
+uvicorn app.main:app --reload
+
+Crear app:
+npx create-next-app@latest
+
+Ejecutar frontend
+npm run dev
