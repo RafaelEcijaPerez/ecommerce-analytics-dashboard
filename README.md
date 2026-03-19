@@ -144,6 +144,21 @@ Construir un dashboard donde se puedan consultar:
 
 ---
 
+## Día 2 — API básica
+
+Se ha implementado la estructura inicial de la API:
+
+- Router principal
+- Endpoint `/sales`
+- Organización modular (api, router, endpoints)
+
+Se ha aprendido:
+
+- Cómo funcionan los routers en FastAPI
+- Cómo estructurar un backend profesional
+- Resolución de errores de imports en Python
+
+
 ## 👨‍💻 Autor
 
 Rafael Ecija Perez
