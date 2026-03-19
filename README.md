@@ -158,6 +158,106 @@ Se ha aprendido:
 - Cómo estructurar un backend profesional
 - Resolución de errores de imports en Python
 
+## 📅 Día 3 — Conexión API y lógica (CRUD)
+
+### 🎯 Objetivo
+
+Separar la lógica de negocio de los endpoints y construir una API más estructurada y mantenible.
+
+---
+
+### 🧱 Cambios realizados
+
+Se ha implementado una arquitectura más limpia separando:
+
+* **API (endpoints)** → `app/api/`
+* **Lógica de datos (CRUD)** → `app/crud/`
+
+---
+
+### 🔌 Endpoint implementado
+
+#### `/sales`
+
+Devuelve datos de ventas junto con métricas básicas:
+
+```json
+{
+  "data": [
+    {"date": "2026-03-10", "revenue": 1200},
+    {"date": "2026-03-11", "revenue": 900}
+  ],
+  "total_revenue": 2100
+}
+```
+
+---
+
+### 🧠 Flujo de la aplicación
+
+```text
+Cliente (browser)
+   ↓
+Endpoint (/sales)
+   ↓
+api/sales.py
+   ↓
+crud/sale.py
+   ↓
+Datos
+```
+
+---
+
+### 📁 Estructura relevante
+
+```text
+app/
+ ├── api/
+ │    ├── router.py
+ │    └── sales.py
+ │
+ ├── crud/
+ │    └── sale.py
+ │
+ └── main.py
+```
+
+---
+
+### ⚙️ Lógica implementada
+
+En `crud/sale.py`:
+
+* Obtención de datos de ventas (simulados)
+* Cálculo de métricas:
+
+  * total revenue
+
+---
+
+### 💡 Conceptos aprendidos
+
+* Separación de responsabilidades (API vs lógica)
+* Organización modular en backend
+* Flujo completo de una petición HTTP
+* Uso de funciones CRUD
+* Mejora de la mantenibilidad del código
+
+---
+
+### 🚀 Próximos pasos
+
+* Conectar con base de datos real (SQLite)
+* Ejecutar queries SQL reales
+* Añadir filtros (por fecha, etc.)
+
+---
+
+### 🧠 Notas personales
+
+Este paso es clave para evitar código desordenado y facilita escalar el proyecto en el futuro.
+
 
 ## 👨‍💻 Autor
 
