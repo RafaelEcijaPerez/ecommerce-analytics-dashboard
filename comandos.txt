@@ -33,3 +33,5 @@ npx create-next-app@latest
 
 Ejecutar frontend
 npm run dev
+
+python -m database.init_db

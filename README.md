@@ -258,6 +258,253 @@ En `crud/sale.py`:
 
 Este paso es clave para evitar código desordenado y facilita escalar el proyecto en el futuro.
 
+## 📅 Día 4 — Base de datos (SQLite) + SQL real
+
+### 🎯 Objetivo
+
+Conectar la API con una base de datos real y empezar a trabajar con consultas SQL.
+
+---
+
+### 🧱 Cambios realizados
+
+* Creación de base de datos con SQLite
+* Definición de tabla `sales`
+* Inserción de datos de prueba
+* Conexión desde el backend a la base de datos
+* Lectura de datos desde SQL en lugar de datos simulados
+
+---
+
+### 🗄️ Base de datos
+
+Tabla inicial utilizada:
+
+```sql
+CREATE TABLE sales (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    date TEXT,
+    revenue INTEGER
+);
+```
+
+---
+
+### 🔌 Conexión a la base de datos
+
+Archivo: `database/db.py`
+
+* Se establece conexión con SQLite
+* Uso de `row_factory` para trabajar con diccionarios
+
+---
+
+### 📊 Endpoint `/sales`
+
+Ahora obtiene datos reales desde la base de datos:
+
+```json
+{
+  "data": [
+    {"date": "2026-03-10", "revenue": 1200},
+    {"date": "2026-03-11", "revenue": 900}
+  ],
+  "total_revenue": 2100
+}
+```
+
+---
+
+### 🧠 Flujo actualizado
+
+```text
+Cliente (browser)
+   ↓
+Endpoint (/sales)
+   ↓
+api/sales.py
+   ↓
+crud/sales.py
+   ↓
+SQLite (database)
+```
+
+---
+
+### ⚙️ Lógica implementada
+
+* Uso de `SELECT` para obtener datos
+* Uso de `fetchall()` para recuperar múltiples filas
+* Conversión de resultados SQL a formato JSON
+* Cálculo de métricas (`total_revenue`)
+
+---
+
+### 🔍 Filtros con SQL
+
+Se han implementado consultas con condiciones:
+
+```sql
+SELECT date, revenue 
+FROM sales 
+WHERE date = ?
+```
+
+Uso de parámetros para evitar SQL Injection.
+
+---
+
+### 💡 Conceptos aprendidos
+
+* Conexión a base de datos con SQLite
+* Diferencia entre `fetchone()` y `fetchall()`
+* Ejecución de consultas SQL desde Python
+* Uso de parámetros (`?`) en queries
+* Transformación de datos SQL → JSON
+* Separación de lógica (CRUD)
+
+---
+
+### ⚠️ Problemas encontrados
+
+* Errores en imports (`ModuleNotFoundError`)
+* Uso incorrecto de `fetchone()`
+* Problemas con tipos de datos (`row` como string)
+* Errores de sintaxis SQL
+
+---
+
+### 🚀 Próximos pasos
+
+* Añadir más tablas (products)
+* Realizar consultas con JOIN
+* Mejorar filtros (múltiples condiciones)
+* Preparar estructura para modelo dimensional (Data Warehouse)
+
+---
+
+### 🧠 Notas personales
+
+Este día marca el paso de una API básica a una aplicación real conectada a datos.
+
+Se empieza a trabajar con lógica de datos, consultas SQL y estructura profesional de backend.
+
+## 📅 Día 5 — Relaciones (JOIN) y agregaciones SQL
+
+### 🎯 Objetivo
+
+Introducir relaciones entre tablas y realizar consultas más avanzadas usando `JOIN`, `GROUP BY` y funciones de agregación.
+
+---
+
+### 🧱 Cambios realizados
+
+* Creación de la tabla `products`
+* Relación entre `sales` y `products` mediante `product_id`
+* Implementación de consultas con `JOIN`
+* Creación de endpoints más avanzados
+* Introducción a agregaciones (`COUNT`, `SUM`)
+
+---
+
+### 🗄️ Base de datos
+
+#### Tabla `products`
+
+```sql
+CREATE TABLE products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    category TEXT
+);
+```
+
+#### Relación con `sales`
+
+```text
+sales.product_id → products.id
+```
+
+---
+
+### 🔗 JOIN implementado
+
+Consulta para obtener ventas con información del producto:
+
+```sql
+SELECT s.date, p.name as product, s.revenue
+FROM sales s
+JOIN products p ON s.product_id = p.id;
+```
+
+---
+
+### 🌐 Endpoint `/sales-with-products`
+
+Devuelve ventas con nombre de producto:
+
+```json
+{
+  "data": [
+    {"date": "2026-03-10", "product": "Laptop", "revenue": 1200}
+  ]
+}
+```
+
+---
+
+### 🏆 Endpoint `/top-products`
+
+Consulta para obtener productos más vendidos:
+
+```sql
+SELECT p.name as product, COUNT(*) as total_sales
+FROM sales s
+JOIN products p ON s.product_id = p.id
+GROUP BY p.name
+ORDER BY total_sales DESC;
+```
+
+---
+
+### 🧠 Conceptos aprendidos
+
+* Relaciones entre tablas (foreign keys)
+* Uso de `JOIN` para combinar datos
+* Agrupación de datos con `GROUP BY`
+* Funciones de agregación (`COUNT`, `SUM`)
+* Ordenación de resultados (`ORDER BY`)
+* Diferencia entre:
+
+  * producto más vendido (COUNT)
+  * producto más rentable (SUM)
+
+---
+
+### ⚠️ Problemas encontrados
+
+* Errores en queries SQL (sintaxis, uso incorrecto de funciones)
+* Confusión entre `WHERE` y funciones agregadas
+* Diferencias entre métricas (ventas vs ingresos)
+* Separación incorrecta de archivos (API vs CRUD)
+
+---
+
+### 🚀 Próximos pasos
+
+* Añadir campo `quantity` a `sales`
+* Mejorar métricas (ventas reales vs ingresos)
+* Avanzar hacia modelo tipo Data Warehouse (`fact_sales`, `dim_product`)
+* Añadir más endpoints analíticos
+
+---
+
+### 🧠 Notas personales
+
+Este día marca el paso a trabajar con datos relacionales reales.
+
+Se empieza a pensar en términos de análisis de datos, no solo en código, entendiendo qué métricas tienen sentido y cómo obtenerlas correctamente.
+
 
 ## 👨‍💻 Autor
 
