@@ -1,124 +1,174 @@
 from database.db import get_connection
 
-#Ejemplo para sacar las ventas, esto se puede modificar para sacar las ventas de la base de datos
-def get_sales():
-    # Simulación de datos de ventas
-    """
-    return {
-        "message": "Sales endpoint working",
-        "data": [
-            {"date": "2026-03-10", "revenue": 1200},
-            {"date": "2026-03-11", "revenue": 900}
-        ]
-    }"""
-
-    """
-    data = [
-        {"date": "2026-03-10", "revenue": 1200},
-        {"date": "2026-03-11", "revenue": 900}
+# CRUD operations for the Sales model
+# Create
+def crate_sale(date,product_id,customer_id,quantity,revenue):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO sales (date, product_id, customer_id, quantity, revenue) VALUES (?, ?, ?, ?, ?)",
+                   (date, product_id, customer_id, quantity, revenue))
+    sale_id = cursor.lastrowid
+    conn.commit()
+    cursor.close()
+    conn.close()
+    return sale_id
+# Read
+def get_sale(sale_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE id = ?", (sale_id,))
+    sale = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    if sale:
+        return {
+            "id": sale["id"],
+            "date": sale["date"],
+            "product_id": sale["product_id"],
+            "customer_id": sale["customer_id"],
+            "quantity": sale["quantity"],
+            "revenue": sale["revenue"]
+        }
+    return None
+def get_sales_by_product_id(product_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE product_id = ?", (product_id,))
+    sales = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [
+        {
+            "id": sale["id"],
+            "date": sale["date"],
+            "product_id": sale["product_id"],
+            "customer_id": sale["customer_id"],
+            "quantity": sale["quantity"],
+            "revenue": sale["revenue"]
+        }
+        for sale in sales
     ]
-
-    total = sum(item["revenue"] for item in data)
-
-    return data, total
-    """
-
+def get_sales_by_customer_id(customer_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT date, revenue FROM sales")
-
-    # Obtener la primera fila de resultados
-    #rows = cursor.fetchall()
-
-    #obtener todas las filas de resultados
-    rows = cursor.fetchall()
+    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE customer_id = ?", (customer_id,))
+    sales = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [
+        {
+            "id": sale["id"],
+            "date": sale["date"],
+            "product_id": sale["product_id"],
+            "customer_id": sale["customer_id"],
+            "quantity": sale["quantity"],
+            "revenue": sale["revenue"]
+        }
+        for sale in sales
+    ]
+def get_sales_by_date_range(start_date, end_date):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE date BETWEEN ? AND ?", (start_date, end_date))
+    sales = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [
+        {
+            "id": sale["id"],
+            "date": sale["date"],
+            "product_id": sale["product_id"],
+            "customer_id": sale["customer_id"],
+            "quantity": sale["quantity"],
+            "revenue": sale["revenue"]
+        }
+        for sale in sales
+    ]
+def get_all_sales():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales")
+    sales = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [
+        {
+            "id": sale["id"],
+            "date": sale["date"],
+            "product_id": sale["product_id"],
+            "customer_id": sale["customer_id"],
+            "quantity": sale["quantity"],
+            "revenue": sale["revenue"]
+        }
+        for sale in sales
+    ]
+# Get information about sales by product category
+def get_sales_by_product_category(category):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT s.id, s.date, s.product_id, s.customer_id, s.quantity, s.revenue
+        FROM sales s
+        JOIN products p ON s.product_id = p.id
+        WHERE p.category = ?
+    """, (category,))
+    sales = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [
+        {
+            "id": sale["id"],
+            "date": sale["date"],
+            "product_id": sale["product_id"],
+            "customer_id": sale["customer_id"],
+            "quantity": sale["quantity"],
+            "revenue": sale["revenue"]
+        }
+        for sale in sales
+    ]
+# Update
+def update_sale(sale_id, date=None, product_id=None, customer_id=None, quantity=None, revenue=None):
+    conn = get_connection()
+    cursor = conn.cursor()
     
-    data = []
-    #bucle para sacar todas las ventas
-    for row in rows:
-        #añade en el diccionario la fecha y el ingreso
-        data.append({
-            "date": row["date"],
-            "revenue": row["revenue"]
-        })
+    query = "UPDATE sales SET "
+    updates = []
+    params = []
 
-    #cierra la conexión a la base de datos
+    if date:
+        updates.append("date = ?")
+        params.append(date)
+
+    if product_id:
+        updates.append("product_id = ?")
+        params.append(product_id)
+
+    if customer_id:
+        updates.append("customer_id = ?")
+        params.append(customer_id)
+
+    if quantity is not None:
+        updates.append("quantity = ?")
+        params.append(quantity)
+
+    if revenue is not None:
+        updates.append("revenue = ?")
+        params.append(revenue)
+
+    if updates:
+        query += ", ".join(updates) + " WHERE id = ?"
+        params.append(sale_id)
+        cursor.execute(query, params)
+        conn.commit()
+
     cursor.close()
     conn.close()
 
-    #devolver el total de las ventas
-    total = sum(item["revenue"] for item in data)
-    return data , total
-
-#ejemplo para sacar las ventas por fecha, esto se puede modificar para sacar las ventas de la base de datos
-def get_sales_by_date(date: str):
-    #Concetar a la base de datos
+# Delete
+def delete_sale(sale_id):
     conn = get_connection()
     cursor = conn.cursor()
-
-    #Ejecutar la consulta para sacar las ventas por fecha
-    cursor.execute("SELECT date, revenue FROM sales WHERE date = ?", (date,))
-
-    #obtener todas las filas de resultados
-    rows = cursor.fetchall()
-
-    data = []
-    #bucle para sacar todas las ventas por fecha
-    for row in rows:
-        #añade en el diccionario la fecha y el ingreso
-        data.append({
-            "date": row["date"],
-            "revenue": row["revenue"]
-        })
-
-    #cierra la conexión a la base de datos
+    cursor.execute("DELETE FROM sales WHERE id = ?", (sale_id,))
+    conn.commit()
     cursor.close()
     conn.close()
-
-    return data 
-
-def get_sales_with_products():
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("""
-        SELECT s.date, p.name as product, s.revenue
-        FROM sales s
-        JOIN products p ON s.product_id = p.id
-    """)
-
-    rows = cursor.fetchall()
-
-    data = []
-    for row in rows:
-        data.append({
-            "date": row["date"],
-            "product": row["product"],
-            "revenue": row["revenue"]
-        })
-
-    conn.close()
-    return data
-
-def get_Top_products():
-    conn = get_connection()
-    cursor = conn.cursor()
-    #producto que mas se ha vendido
-    cursor.execute("""
-        SELECT p.name as product, COUNT(*) as total_sales
-        FROM sales s
-        JOIN products p ON s.product_id = p.id
-        GROUP BY p.name
-        ORDER BY total_sales DESC
-        LIMIT 5
-    """)
-    rows = cursor.fetchall()
-    data = []
-    for row in rows:
-        data.append({
-            "product": row["product"],
-            "total_sales": row["total_sales"]
-        })
-
-    conn.close()
-    return data
