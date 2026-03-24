@@ -931,6 +931,136 @@ El proyecto ya tiene una estructura realista, con datos suficientes para anális
 
 Se empieza a trabajar con mentalidad de proyecto profesional, no solo de práctica.
 
+## 📅 Día 9 — Limpieza, mappers y consultas avanzadas
+
+### 🎯 Objetivo
+
+Mejorar la calidad del backend, evitar duplicación de código y trabajar con consultas más avanzadas usando `JOIN` y alias.
+
+---
+
+### 🧱 Cambios realizados
+
+* Refactorización del código
+* Creación de mappers reutilizables
+* Implementación de consultas con `JOIN`
+* Corrección de errores en estructuras de datos
+* Mejora de la consistencia del código
+
+---
+
+### 🧠 Mappers (utils)
+
+Se creó una carpeta `utils/` con funciones para transformar los resultados de la base de datos:
+
+```python
+def map_sale(row):
+    return {
+        "id": row["id"],
+        "date": row["date"],
+        "product_id": row["product_id"],
+        "customer_id": row["customer_id"],
+        "quantity": row["quantity"],
+        "revenue": row["revenue"]
+    }
+```
+
+---
+
+### 🚀 Mapper avanzado con JOIN
+
+Para consultas más complejas se creó un mapper específico:
+
+```python
+def map_sale_with_names(row):
+    return {
+        "id": row["id"],
+        "date": row["date"],
+        "product_name": row["product_name"],
+        "customer_name": row["customer_name"],
+        "quantity": row["quantity"],
+        "revenue": row["revenue"]
+    }
+```
+
+---
+
+### 🔗 Uso de JOIN
+
+Se implementó una consulta que combina varias tablas:
+
+```sql
+SELECT 
+    s.id,
+    s.date,
+    p.name AS product_name,
+    c.name AS customer_name,
+    s.quantity,
+    s.revenue
+FROM sales s
+JOIN products p ON s.product_id = p.id
+JOIN customers c ON s.customer_id = c.id
+```
+
+---
+
+### ⚠️ Problemas encontrados
+
+* Error al usar columnas sin alias (`p.name`)
+* Uso incorrecto de estructuras `{}` en listas (creando sets)
+* Inconsistencia entre query y mapper
+* Errores al acceder a claves inexistentes (`IndexError`)
+
+---
+
+### ✅ Soluciones aplicadas
+
+* Uso de `AS` para alias en SQL
+* Corrección de list comprehensions
+* Separación de mappers según tipo de consulta
+* Alineación entre query y estructura de datos
+
+---
+
+### 🧠 Conceptos aprendidos
+
+* Uso avanzado de `JOIN`
+* Importancia de los alias (`AS`)
+* Separación de responsabilidades (query vs mapper)
+* Refactorización de código
+* Buenas prácticas en backend
+* Reutilización de lógica
+
+---
+
+### 🚀 Resultado
+
+El backend ahora:
+
+* Es más limpio
+* Es más reutilizable
+* Tiene consultas más potentes
+* Está mejor preparado para escalar
+
+---
+
+### 🔥 Próximos pasos
+
+* Endpoint `/top-products`
+* Mejorar respuestas de la API (formato estándar)
+* Preparar frontend
+* Documentación final del proyecto
+
+---
+
+### 🧠 Notas personales
+
+Este día ha sido clave para entender cómo funciona realmente un backend profesional.
+
+Los errores han ayudado a comprender mejor cómo funcionan las consultas SQL y la relación entre los datos y el código.
+
+Se empieza a trabajar con una mentalidad más cercana a proyectos reales.
+
 ## 👨‍💻 Autor
 
 Rafael Ecija Perez
