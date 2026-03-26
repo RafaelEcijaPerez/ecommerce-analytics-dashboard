@@ -1,4 +1,5 @@
 from database.db import get_connection
+from app.utils.mappers import map_product
 
 # CRUD operations for the Product model
 #create
@@ -22,12 +23,7 @@ def get_product(product_id):
     cursor.close()
     conn.close()
     if product:
-        return {
-            "id": product["id"],
-            "name": product["name"],
-            "category": product["category"],
-            "price": product["price"]
-        }
+        return map_product(product)
     return None
 #Read products for arguments
 def get_products_price_range(min_price, max_price):
@@ -39,12 +35,7 @@ def get_products_price_range(min_price, max_price):
     cursor.close()
     conn.close()
     return [
-        {
-            "id": product["id"],
-            "name": product["name"],
-            "category": product["category"],
-            "price": product["price"]
-        }
+        map_product(product)
         for product in products
     ]
 
@@ -81,12 +72,9 @@ def get_products_by_argument(name=None, category=None, min_price=None, max_price
     conn.close()
     return [
         {
-            "id": product["id"],
-            "name": product["name"],
-            "category": product["category"],
-            "price": product["price"]
+            map_product(product)
+            for product in products
         }
-        for product in products
     ]
 
 def get_all_products():
@@ -97,12 +85,7 @@ def get_all_products():
     cursor.close()
     conn.close()
     return [
-        {
-            "id": product["id"],
-            "name": product["name"],
-            "category": product["category"],
-            "price": product["price"]
-        }
+        map_product(product)
         for product in products
     ]
 

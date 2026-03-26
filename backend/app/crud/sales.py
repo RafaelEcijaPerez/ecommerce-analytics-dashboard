@@ -1,5 +1,5 @@
 from database.db import get_connection
-
+from app.utils.mappers import map_sale, map_sale_with_names
 # CRUD operations for the Sales model
 # Create
 def crate_sale(date,product_id,customer_id,quantity,revenue):
@@ -16,91 +16,65 @@ def crate_sale(date,product_id,customer_id,quantity,revenue):
 def get_sale(sale_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE id = ?", (sale_id,))
+    cursor.execute("SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id WHERE s.id = ?", (sale_id,))
     sale = cursor.fetchone()
     cursor.close()
     conn.close()
     if sale:
-        return {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
-        }
+        return  map_sale_with_names(sale)
+        
     return None
+
 def get_sales_by_product_id(product_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE product_id = ?", (product_id,))
+    cursor.execute("SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id WHERE s.product_id = ?", (product_id,))
     sales = cursor.fetchall()
     cursor.close()
     conn.close()
     return [
-        {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
-        }
+        map_sale_with_names(sale)
         for sale in sales
     ]
 def get_sales_by_customer_id(customer_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE customer_id = ?", (customer_id,))
+    cursor.execute("SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id WHERE s.customer_id = ?", (customer_id,))
     sales = cursor.fetchall()
     cursor.close()
     conn.close()
     return [
-        {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
-        }
-        for sale in sales
+        
+            map_sale_with_names(sale)
+            for sale in sales
+        
+        
     ]
 def get_sales_by_date_range(start_date, end_date):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE date BETWEEN ? AND ?", (start_date, end_date))
+    cursor.execute("SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id WHERE s.date BETWEEN ? AND ?", (start_date, end_date))
     sales = cursor.fetchall()
     cursor.close()
     conn.close()
     return [
-        {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
-        }
-        for sale in sales
+        
+            map_sale_with_names(sale)
+            for sale in sales
+        
     ]
 def get_all_sales():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales")
+    cursor.execute("SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id")
     sales = cursor.fetchall()
     cursor.close()
     conn.close()
     return [
-        {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
-        }
-        for sale in sales
+        
+            map_sale_with_names(sale)
+            for sale in sales
+        
     ]
 # Get information about sales by product category
 def get_sales_by_product_category(category):
@@ -116,15 +90,31 @@ def get_sales_by_product_category(category):
     cursor.close()
     conn.close()
     return [
+        
+            map_sale_with_names(sale)
+            for sale in sales
+        
+    ]
+def get_top_products():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT p.name, count(*) AS total_quantity
+        FROM sales s
+        JOIN products p ON s.product_id = p.id
+        GROUP BY s.product_id
+        ORDER BY total_quantity DESC
+        LIMIT 5
+    """)
+    top_products = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [
         {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
+            "product_name": product["name"],
+            "total_quantity": product["total_quantity"]
         }
-        for sale in sales
+        for product in top_products
     ]
 # Update
 def update_sale(sale_id, date=None, product_id=None, customer_id=None, quantity=None, revenue=None):
