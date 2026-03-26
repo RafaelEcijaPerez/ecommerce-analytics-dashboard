@@ -1061,6 +1061,255 @@ Los errores han ayudado a comprender mejor cómo funcionan las consultas SQL y l
 
 Se empieza a trabajar con una mentalidad más cercana a proyectos reales.
 
+## 📅 Día 10 — Endpoints de análisis y cierre del backend
+
+### 🎯 Objetivo
+
+Finalizar el backend implementando endpoints de análisis (analytics) y dejar la API lista para integrarse con un frontend.
+
+---
+
+### 🚀 Funcionalidades añadidas
+
+Se han implementado endpoints avanzados para análisis de datos:
+
+---
+
+### 🔥 Top productos más vendidos
+
+```text
+GET /sales/top-products
+```
+
+Devuelve los productos con mayor cantidad de ventas.
+
+---
+
+### 🔥 Top clientes
+
+```text
+GET /sales/top-customers
+```
+
+Muestra los clientes que más dinero han gastado.
+
+---
+
+### 🔥 Resumen de ingresos
+
+```text
+GET /sales/revenue-summary
+```
+
+Incluye:
+
+* Total de pedidos
+* Ingresos totales
+* Valor medio por pedido
+
+---
+
+### 🔥 Ventas por categoría
+
+```text
+GET /sales/top-sales-by-category
+```
+
+Permite analizar qué categorías generan más ingresos.
+
+---
+
+### 🧠 Conceptos trabajados
+
+* Funciones agregadas en SQL (`SUM`, `COUNT`, `AVG`)
+* Agrupaciones (`GROUP BY`)
+* Ordenación de resultados (`ORDER BY`)
+* Uso de `JOIN` para combinar tablas
+* Creación de endpoints de tipo analytics
+
+---
+
+### ⚠️ Problemas encontrados
+
+* Conflictos de rutas en FastAPI (`/{sale_id}` capturando otras rutas)
+* Errores en alias SQL (`AS`)
+* Inconsistencias entre consultas y mappers
+* Errores en nombres de claves en diccionarios
+
+---
+
+### ✅ Soluciones aplicadas
+
+* Reordenación de rutas (rutas dinámicas siempre al final)
+* Uso correcto de alias en consultas SQL
+* Separación de mappers según tipo de consulta
+* Corrección de estructuras de datos
+
+---
+
+### 🧱 Estado final del backend
+
+El backend ahora incluye:
+
+* CRUD completo
+* Filtros dinámicos
+* Consultas con JOIN
+* Endpoints de análisis
+* Código modular y reutilizable
+
+---
+
+### 🚀 Resultado
+
+API lista para:
+
+* Integrarse con frontend (React u otro)
+* Visualizar datos en dashboards
+* Escalar con nuevas funcionalidades
+
+---
+
+### 🧠 Conclusión
+
+Este día marca el cierre del backend.
+
+Se ha pasado de operaciones básicas (CRUD) a un sistema capaz de generar métricas útiles para negocio.
+
+El proyecto ya tiene estructura y funcionalidades similares a aplicaciones reales.
+
+---
+
+### 🔥 Próximo paso
+
+👉 Desarrollo del frontend (visualización de datos)
+
+* Gráficas
+* Tablas dinámicas
+* Dashboard interactivo
+
+# 📅 Día 11 — Conexión Frontend + Backend (Dashboard funcional)
+
+## 🚀 Objetivo
+
+Conectar el frontend en React con el backend en FastAPI y mostrar datos reales en un dashboard.
+
+---
+
+## 🧱 Trabajo realizado
+
+### 🔗 Conexión API
+
+* Se conectó el frontend (React + Vite) con el backend (FastAPI)
+* Se realizaron peticiones HTTP usando `fetch`
+* Se validó la correcta respuesta del backend (status 200)
+
+---
+
+### ⚠️ Problema encontrado: CORS
+
+Al intentar conectar el frontend con el backend, surgió el error:
+
+```
+No 'Access-Control-Allow-Origin' header
+```
+
+#### ✅ Solución:
+
+Se añadió el middleware de CORS en FastAPI:
+
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+---
+
+### 📊 Dashboard básico
+
+Se creó el componente `Dashboard.jsx` que:
+
+* Obtiene datos desde la API (`/sales/revenue-summary`)
+* Muestra métricas clave:
+
+  * Total Orders
+  * Total Revenue
+  * Avg Order Value
+
+---
+
+### 🧩 Componentes reutilizables
+
+#### Card.jsx
+
+* Componente reutilizable para mostrar métricas
+* Mejora la organización del código
+
+---
+
+### 🏆 Top Products
+
+* Se integró el endpoint `/sales/top-products`
+* Se muestran los productos más vendidos
+* Renderizado dinámico con `.map()`
+
+---
+
+## 🧠 Conceptos aprendidos
+
+* Comunicación frontend ↔ backend
+* Manejo de estados con `useState`
+* Uso de `useEffect` para llamadas async
+* Manejo de errores reales (CORS)
+* Renderizado dinámico en React
+* Separación de responsabilidades (components / services)
+
+---
+
+## 📁 Estructura del frontend
+
+```
+src/
+ ├── components/
+ │    └── Card.jsx
+ ├── pages/
+ │    └── Dashboard.jsx
+ ├── services/
+ │    └── api.js
+```
+
+---
+
+## 📌 Estado actual del proyecto
+
+✅ Backend completo
+✅ CRUD funcionando
+✅ Datos ficticios realistas
+✅ Frontend conectado
+✅ Dashboard funcional
+
+---
+
+## 🚀 Próximos pasos (Día 12)
+
+* 📊 Añadir gráficas (Recharts)
+* 🎨 Mejorar diseño UI
+* 📈 Visualización avanzada de datos
+
+---
+
+## 💬 Notas
+
+Este día marca el paso de un proyecto backend a una aplicación fullstack funcional, siendo un punto clave en el desarrollo del dashboard.
+
+---
+
 ## 👨‍💻 Autor
 
 Rafael Ecija Perez
