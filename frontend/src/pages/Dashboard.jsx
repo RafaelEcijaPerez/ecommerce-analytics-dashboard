@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getRevenueSummary, getTopProducts } from "../services/api";
 import Card from "../components/Card";
+import SalesChart from "../components/SalesChart";
 
 function Dashboard() {
     const [data, setData] = useState(null);
@@ -19,8 +20,8 @@ function Dashboard() {
 
     if (!data) return <p>Cargando dashboard...</p>;
     return (
-        <div style={{ padding: "20px" }}>
-            <h1>Dashboard</h1>
+        <div style={{ padding: "20px", maxWidth: "1000px", margin: "0 auto" }}>
+            <h1 style={{ marginBottom: "30px" }}>Dashboard</h1>
 
             <div style={{
                 display: "flex",
@@ -34,20 +35,24 @@ function Dashboard() {
                 <Card title="Avg Order Value" value={data.avg_order_value} />
             </div>
 
-            <h2>Top Products</h2>
-            <ul>
+            <h2 style={{ textAlign: "center" }}>Top Products</h2>
+
+            <ul style={{ padding: 0 }}>
                 {topProducts.map((prod, index) => (
                     <li key={index} style={{
-                        listStyleType: "none",
+                        listStyle: "none",
                         textAlign: "center",
                         marginBottom: "10px"
                     }}>
-                        {prod.product_name} - {prod.total_sold} ventas
+                        🛒 {prod.product_name} — {prod.total_sold} ventas
                     </li>
                 ))}
             </ul>
 
-
+            <div style={{ marginTop: "40px" }}>
+                <h2 style={{ textAlign: "center" }}>Sales Chart</h2>
+                <SalesChart data={topProducts} />
+            </div>
         </div>
 
 

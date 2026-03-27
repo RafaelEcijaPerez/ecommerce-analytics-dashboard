@@ -1310,6 +1310,117 @@ Este día marca el paso de un proyecto backend a una aplicación fullstack funci
 
 ---
 
+# 📅 Día 12 — Visualización de Datos (Gráficas + UI)
+
+## 🚀 Objetivo
+
+Transformar el dashboard en una herramienta visual mediante gráficas y mejorar la experiencia de usuario (UI).
+
+---
+
+## 📊 Trabajo realizado
+
+### 📈 Implementación de gráficas
+
+* Se integró la librería `recharts`
+* Se creó una gráfica de barras (**BarChart**) para visualizar:
+
+  * Productos más vendidos
+  * Cantidad total de ventas por producto
+
+---
+
+### 🧩 Nuevo componente
+
+#### `SalesChart.jsx`
+
+* Componente reutilizable para mostrar datos en formato gráfico
+* Uso de:
+
+  * `BarChart`
+  * `XAxis`, `YAxis`
+  * `Tooltip`
+  * `ResponsiveContainer`
+
+---
+
+### 🔗 Integración con datos reales
+
+* Se conectó la gráfica con el endpoint:
+
+  * `/sales/top-products`
+* Los datos se renderizan dinámicamente
+
+---
+
+### 🎨 Mejora de UI
+
+Se realizaron mejoras visuales:
+
+* Dashboard centrado (`maxWidth`)
+* Separación clara de secciones
+* Cards más limpias y organizadas
+* Lista de productos más legible
+* Contenedor de gráfica con:
+
+  * fondo blanco
+  * bordes redondeados
+  * sombra
+
+---
+
+## 🧠 Conceptos aprendidos
+
+* Visualización de datos en React
+* Uso de librerías externas (`recharts`)
+* Separación de componentes
+* Mejora de experiencia de usuario (UI/UX)
+* Transformar datos en información visual
+
+---
+
+## 📁 Estructura actual
+
+```id="z6g4r1"
+src/
+ ├── components/
+ │    ├── Card.jsx
+ │    └── SalesChart.jsx
+ ├── pages/
+ │    └── Dashboard.jsx
+ ├── services/
+ │    └── api.js
+```
+
+---
+
+## 📌 Estado del proyecto
+
+✅ Backend completo
+✅ CRUD funcional
+✅ Datos realistas
+✅ Frontend conectado
+✅ Dashboard con métricas
+✅ Gráfica funcional
+✅ UI mejorada
+
+---
+
+## 🚀 Próximos pasos (Día 13)
+
+* 🧭 Añadir navegación (menú / sidebar)
+* 📄 Crear nuevas páginas (sales, products, customers)
+* ⚙️ Mejorar estructura del frontend
+* 📊 Añadir más gráficas
+
+---
+
+## 💬 Notas
+
+Este día marca el paso de un dashboard básico a una aplicación con visualización de datos, acercándose a una herramienta real de análisis.
+
+---
+
 ## 👨‍💻 Autor
 
 Rafael Ecija Perez
