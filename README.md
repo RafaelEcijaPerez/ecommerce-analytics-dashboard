@@ -1421,6 +1421,116 @@ Este día marca el paso de un dashboard básico a una aplicación con visualizac
 
 ---
 
+# 📅 Día 13 — Navegación y Estructura de Aplicación
+
+## 🚀 Objetivo
+
+Convertir el proyecto en una aplicación completa con múltiples páginas y navegación entre ellas.
+
+---
+
+## 🧭 Trabajo realizado
+
+### 🔗 Implementación de rutas
+
+Se integró `react-router-dom` para gestionar la navegación entre páginas.
+
+Rutas creadas:
+
+* `/` → Dashboard
+* `/sales` → Ventas
+* `/products` → Productos
+* `/customers` → Clientes
+
+---
+
+### 🧱 Estructura del proyecto
+
+Se organizó el frontend en páginas independientes:
+
+```bash
+src/
+ ├── components/
+ │    ├── Card.jsx
+ │    ├── SalesChart.jsx
+ │    ├── Navbar.jsx
+ │    └── Layout.jsx
+ ├── pages/
+ │    ├── Dashboard.jsx
+ │    ├── Sales.jsx
+ │    ├── Products.jsx
+ │    └── Customers.jsx
+ ├── services/
+ │    └── api.js
+```
+
+---
+
+### 🎨 Creación de Layout global
+
+Se implementó un componente `Layout` que:
+
+* Define la estructura general de la app
+* Incluye el sidebar
+* Renderiza el contenido dinámicamente
+
+---
+
+### 🧭 Sidebar de navegación
+
+Se reemplazó el menú superior por un sidebar lateral:
+
+* Navegación clara entre secciones
+* Diseño tipo aplicación profesional
+* Uso de `NavLink` para resaltar la ruta activa
+
+---
+
+### 🎯 Mejora de experiencia de usuario
+
+* Indicador visual de página activa
+* Layout con distribución horizontal (sidebar + contenido)
+* Fondo y espaciado mejorados
+* Interfaz más limpia y organizada
+
+---
+
+## 🧠 Conceptos aprendidos
+
+* Enrutamiento en React (`react-router-dom`)
+* Separación de responsabilidades (Layout / Pages / Components)
+* Navegación en aplicaciones SPA
+* Uso de `NavLink` para rutas activas
+* Arquitectura básica de frontend escalable
+
+---
+
+## 📌 Estado del proyecto
+
+✅ Backend funcional
+✅ API conectada
+✅ Dashboard con métricas
+✅ Gráficas implementadas
+✅ Navegación entre páginas
+✅ Layout profesional con sidebar
+
+---
+
+## 🚀 Próximos pasos (Día 14)
+
+* 📊 Implementar tablas de datos reales en cada página
+* 🔍 Añadir filtros y búsqueda
+* 🔗 Conectar más endpoints del backend
+* 📄 Mejorar visualización de listas
+
+---
+
+## 💬 Notas
+
+Este día marca un punto clave en el proyecto: se pasa de una única vista a una aplicación estructurada y escalable, sentando las bases para funcionalidades más avanzadas.
+
+---
+
 ## 👨‍💻 Autor
 
 Rafael Ecija Perez
