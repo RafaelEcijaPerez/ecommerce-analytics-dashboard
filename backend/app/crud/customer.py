@@ -1,4 +1,5 @@
 from database.db import get_connection
+from app.utils.mappers import map_customer
 # CRUD operations for the Customer model
 # Create
 def create_customer(name, email):
@@ -19,11 +20,7 @@ def get_customer(customer_id):
     cursor.close()
     conn.close()
     if customer:
-        return {
-            "id": customer["id"],
-            "name": customer["name"],
-            "email": customer["email"]
-        }
+        return map_customer(customer)
     return None
 
 def get_customers_by_name(name):
@@ -34,11 +31,7 @@ def get_customers_by_name(name):
     cursor.close()
     conn.close()
     return [
-        {
-            "id": customer["id"],
-            "name": customer["name"],
-            "email": customer["email"]
-        }
+        map_customer(customer)
         for customer in customers
     ]
 def get_customers_by_email(email):
@@ -49,11 +42,7 @@ def get_customers_by_email(email):
     cursor.close()
     conn.close()
     return [
-        {
-            "id": customer["id"],
-            "name": customer["name"],
-            "email": customer["email"]
-        }
+        map_customer(customer)
         for customer in customers
     ]
 
@@ -98,10 +87,6 @@ def get_all_customers():
     cursor.close()
     conn.close()
     return [
-        {
-            "id": customer["id"],
-            "name": customer["name"],
-            "email": customer["email"]
-        }
+        map_customer(customer)
         for customer in customers
     ]

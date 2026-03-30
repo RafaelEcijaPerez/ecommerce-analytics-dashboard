@@ -931,6 +931,736 @@ El proyecto ya tiene una estructura realista, con datos suficientes para anális
 
 Se empieza a trabajar con mentalidad de proyecto profesional, no solo de práctica.
 
+## 📅 Día 9 — Limpieza, mappers y consultas avanzadas
+
+### 🎯 Objetivo
+
+Mejorar la calidad del backend, evitar duplicación de código y trabajar con consultas más avanzadas usando `JOIN` y alias.
+
+---
+
+### 🧱 Cambios realizados
+
+* Refactorización del código
+* Creación de mappers reutilizables
+* Implementación de consultas con `JOIN`
+* Corrección de errores en estructuras de datos
+* Mejora de la consistencia del código
+
+---
+
+### 🧠 Mappers (utils)
+
+Se creó una carpeta `utils/` con funciones para transformar los resultados de la base de datos:
+
+```python
+def map_sale(row):
+    return {
+        "id": row["id"],
+        "date": row["date"],
+        "product_id": row["product_id"],
+        "customer_id": row["customer_id"],
+        "quantity": row["quantity"],
+        "revenue": row["revenue"]
+    }
+```
+
+---
+
+### 🚀 Mapper avanzado con JOIN
+
+Para consultas más complejas se creó un mapper específico:
+
+```python
+def map_sale_with_names(row):
+    return {
+        "id": row["id"],
+        "date": row["date"],
+        "product_name": row["product_name"],
+        "customer_name": row["customer_name"],
+        "quantity": row["quantity"],
+        "revenue": row["revenue"]
+    }
+```
+
+---
+
+### 🔗 Uso de JOIN
+
+Se implementó una consulta que combina varias tablas:
+
+```sql
+SELECT 
+    s.id,
+    s.date,
+    p.name AS product_name,
+    c.name AS customer_name,
+    s.quantity,
+    s.revenue
+FROM sales s
+JOIN products p ON s.product_id = p.id
+JOIN customers c ON s.customer_id = c.id
+```
+
+---
+
+### ⚠️ Problemas encontrados
+
+* Error al usar columnas sin alias (`p.name`)
+* Uso incorrecto de estructuras `{}` en listas (creando sets)
+* Inconsistencia entre query y mapper
+* Errores al acceder a claves inexistentes (`IndexError`)
+
+---
+
+### ✅ Soluciones aplicadas
+
+* Uso de `AS` para alias en SQL
+* Corrección de list comprehensions
+* Separación de mappers según tipo de consulta
+* Alineación entre query y estructura de datos
+
+---
+
+### 🧠 Conceptos aprendidos
+
+* Uso avanzado de `JOIN`
+* Importancia de los alias (`AS`)
+* Separación de responsabilidades (query vs mapper)
+* Refactorización de código
+* Buenas prácticas en backend
+* Reutilización de lógica
+
+---
+
+### 🚀 Resultado
+
+El backend ahora:
+
+* Es más limpio
+* Es más reutilizable
+* Tiene consultas más potentes
+* Está mejor preparado para escalar
+
+---
+
+### 🔥 Próximos pasos
+
+* Endpoint `/top-products`
+* Mejorar respuestas de la API (formato estándar)
+* Preparar frontend
+* Documentación final del proyecto
+
+---
+
+### 🧠 Notas personales
+
+Este día ha sido clave para entender cómo funciona realmente un backend profesional.
+
+Los errores han ayudado a comprender mejor cómo funcionan las consultas SQL y la relación entre los datos y el código.
+
+Se empieza a trabajar con una mentalidad más cercana a proyectos reales.
+
+## 📅 Día 10 — Endpoints de análisis y cierre del backend
+
+### 🎯 Objetivo
+
+Finalizar el backend implementando endpoints de análisis (analytics) y dejar la API lista para integrarse con un frontend.
+
+---
+
+### 🚀 Funcionalidades añadidas
+
+Se han implementado endpoints avanzados para análisis de datos:
+
+---
+
+### 🔥 Top productos más vendidos
+
+```text
+GET /sales/top-products
+```
+
+Devuelve los productos con mayor cantidad de ventas.
+
+---
+
+### 🔥 Top clientes
+
+```text
+GET /sales/top-customers
+```
+
+Muestra los clientes que más dinero han gastado.
+
+---
+
+### 🔥 Resumen de ingresos
+
+```text
+GET /sales/revenue-summary
+```
+
+Incluye:
+
+* Total de pedidos
+* Ingresos totales
+* Valor medio por pedido
+
+---
+
+### 🔥 Ventas por categoría
+
+```text
+GET /sales/top-sales-by-category
+```
+
+Permite analizar qué categorías generan más ingresos.
+
+---
+
+### 🧠 Conceptos trabajados
+
+* Funciones agregadas en SQL (`SUM`, `COUNT`, `AVG`)
+* Agrupaciones (`GROUP BY`)
+* Ordenación de resultados (`ORDER BY`)
+* Uso de `JOIN` para combinar tablas
+* Creación de endpoints de tipo analytics
+
+---
+
+### ⚠️ Problemas encontrados
+
+* Conflictos de rutas en FastAPI (`/{sale_id}` capturando otras rutas)
+* Errores en alias SQL (`AS`)
+* Inconsistencias entre consultas y mappers
+* Errores en nombres de claves en diccionarios
+
+---
+
+### ✅ Soluciones aplicadas
+
+* Reordenación de rutas (rutas dinámicas siempre al final)
+* Uso correcto de alias en consultas SQL
+* Separación de mappers según tipo de consulta
+* Corrección de estructuras de datos
+
+---
+
+### 🧱 Estado final del backend
+
+El backend ahora incluye:
+
+* CRUD completo
+* Filtros dinámicos
+* Consultas con JOIN
+* Endpoints de análisis
+* Código modular y reutilizable
+
+---
+
+### 🚀 Resultado
+
+API lista para:
+
+* Integrarse con frontend (React u otro)
+* Visualizar datos en dashboards
+* Escalar con nuevas funcionalidades
+
+---
+
+### 🧠 Conclusión
+
+Este día marca el cierre del backend.
+
+Se ha pasado de operaciones básicas (CRUD) a un sistema capaz de generar métricas útiles para negocio.
+
+El proyecto ya tiene estructura y funcionalidades similares a aplicaciones reales.
+
+---
+
+### 🔥 Próximo paso
+
+👉 Desarrollo del frontend (visualización de datos)
+
+* Gráficas
+* Tablas dinámicas
+* Dashboard interactivo
+
+# 📅 Día 11 — Conexión Frontend + Backend (Dashboard funcional)
+
+## 🚀 Objetivo
+
+Conectar el frontend en React con el backend en FastAPI y mostrar datos reales en un dashboard.
+
+---
+
+## 🧱 Trabajo realizado
+
+### 🔗 Conexión API
+
+* Se conectó el frontend (React + Vite) con el backend (FastAPI)
+* Se realizaron peticiones HTTP usando `fetch`
+* Se validó la correcta respuesta del backend (status 200)
+
+---
+
+### ⚠️ Problema encontrado: CORS
+
+Al intentar conectar el frontend con el backend, surgió el error:
+
+```
+No 'Access-Control-Allow-Origin' header
+```
+
+#### ✅ Solución:
+
+Se añadió el middleware de CORS en FastAPI:
+
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+---
+
+### 📊 Dashboard básico
+
+Se creó el componente `Dashboard.jsx` que:
+
+* Obtiene datos desde la API (`/sales/revenue-summary`)
+* Muestra métricas clave:
+
+  * Total Orders
+  * Total Revenue
+  * Avg Order Value
+
+---
+
+### 🧩 Componentes reutilizables
+
+#### Card.jsx
+
+* Componente reutilizable para mostrar métricas
+* Mejora la organización del código
+
+---
+
+### 🏆 Top Products
+
+* Se integró el endpoint `/sales/top-products`
+* Se muestran los productos más vendidos
+* Renderizado dinámico con `.map()`
+
+---
+
+## 🧠 Conceptos aprendidos
+
+* Comunicación frontend ↔ backend
+* Manejo de estados con `useState`
+* Uso de `useEffect` para llamadas async
+* Manejo de errores reales (CORS)
+* Renderizado dinámico en React
+* Separación de responsabilidades (components / services)
+
+---
+
+## 📁 Estructura del frontend
+
+```
+src/
+ ├── components/
+ │    └── Card.jsx
+ ├── pages/
+ │    └── Dashboard.jsx
+ ├── services/
+ │    └── api.js
+```
+
+---
+
+## 📌 Estado actual del proyecto
+
+✅ Backend completo
+✅ CRUD funcionando
+✅ Datos ficticios realistas
+✅ Frontend conectado
+✅ Dashboard funcional
+
+---
+
+## 🚀 Próximos pasos (Día 12)
+
+* 📊 Añadir gráficas (Recharts)
+* 🎨 Mejorar diseño UI
+* 📈 Visualización avanzada de datos
+
+---
+
+## 💬 Notas
+
+Este día marca el paso de un proyecto backend a una aplicación fullstack funcional, siendo un punto clave en el desarrollo del dashboard.
+
+---
+
+# 📅 Día 12 — Visualización de Datos (Gráficas + UI)
+
+## 🚀 Objetivo
+
+Transformar el dashboard en una herramienta visual mediante gráficas y mejorar la experiencia de usuario (UI).
+
+---
+
+## 📊 Trabajo realizado
+
+### 📈 Implementación de gráficas
+
+* Se integró la librería `recharts`
+* Se creó una gráfica de barras (**BarChart**) para visualizar:
+
+  * Productos más vendidos
+  * Cantidad total de ventas por producto
+
+---
+
+### 🧩 Nuevo componente
+
+#### `SalesChart.jsx`
+
+* Componente reutilizable para mostrar datos en formato gráfico
+* Uso de:
+
+  * `BarChart`
+  * `XAxis`, `YAxis`
+  * `Tooltip`
+  * `ResponsiveContainer`
+
+---
+
+### 🔗 Integración con datos reales
+
+* Se conectó la gráfica con el endpoint:
+
+  * `/sales/top-products`
+* Los datos se renderizan dinámicamente
+
+---
+
+### 🎨 Mejora de UI
+
+Se realizaron mejoras visuales:
+
+* Dashboard centrado (`maxWidth`)
+* Separación clara de secciones
+* Cards más limpias y organizadas
+* Lista de productos más legible
+* Contenedor de gráfica con:
+
+  * fondo blanco
+  * bordes redondeados
+  * sombra
+
+---
+
+## 🧠 Conceptos aprendidos
+
+* Visualización de datos en React
+* Uso de librerías externas (`recharts`)
+* Separación de componentes
+* Mejora de experiencia de usuario (UI/UX)
+* Transformar datos en información visual
+
+---
+
+## 📁 Estructura actual
+
+```id="z6g4r1"
+src/
+ ├── components/
+ │    ├── Card.jsx
+ │    └── SalesChart.jsx
+ ├── pages/
+ │    └── Dashboard.jsx
+ ├── services/
+ │    └── api.js
+```
+
+---
+
+## 📌 Estado del proyecto
+
+✅ Backend completo
+✅ CRUD funcional
+✅ Datos realistas
+✅ Frontend conectado
+✅ Dashboard con métricas
+✅ Gráfica funcional
+✅ UI mejorada
+
+---
+
+## 🚀 Próximos pasos (Día 13)
+
+* 🧭 Añadir navegación (menú / sidebar)
+* 📄 Crear nuevas páginas (sales, products, customers)
+* ⚙️ Mejorar estructura del frontend
+* 📊 Añadir más gráficas
+
+---
+
+## 💬 Notas
+
+Este día marca el paso de un dashboard básico a una aplicación con visualización de datos, acercándose a una herramienta real de análisis.
+
+---
+
+# 📅 Día 13 — Navegación y Estructura de Aplicación
+
+## 🚀 Objetivo
+
+Convertir el proyecto en una aplicación completa con múltiples páginas y navegación entre ellas.
+
+---
+
+## 🧭 Trabajo realizado
+
+### 🔗 Implementación de rutas
+
+Se integró `react-router-dom` para gestionar la navegación entre páginas.
+
+Rutas creadas:
+
+* `/` → Dashboard
+* `/sales` → Ventas
+* `/products` → Productos
+* `/customers` → Clientes
+
+---
+
+### 🧱 Estructura del proyecto
+
+Se organizó el frontend en páginas independientes:
+
+```bash
+src/
+ ├── components/
+ │    ├── Card.jsx
+ │    ├── SalesChart.jsx
+ │    ├── Navbar.jsx
+ │    └── Layout.jsx
+ ├── pages/
+ │    ├── Dashboard.jsx
+ │    ├── Sales.jsx
+ │    ├── Products.jsx
+ │    └── Customers.jsx
+ ├── services/
+ │    └── api.js
+```
+
+---
+
+### 🎨 Creación de Layout global
+
+Se implementó un componente `Layout` que:
+
+* Define la estructura general de la app
+* Incluye el sidebar
+* Renderiza el contenido dinámicamente
+
+---
+
+### 🧭 Sidebar de navegación
+
+Se reemplazó el menú superior por un sidebar lateral:
+
+* Navegación clara entre secciones
+* Diseño tipo aplicación profesional
+* Uso de `NavLink` para resaltar la ruta activa
+
+---
+
+### 🎯 Mejora de experiencia de usuario
+
+* Indicador visual de página activa
+* Layout con distribución horizontal (sidebar + contenido)
+* Fondo y espaciado mejorados
+* Interfaz más limpia y organizada
+
+---
+
+## 🧠 Conceptos aprendidos
+
+* Enrutamiento en React (`react-router-dom`)
+* Separación de responsabilidades (Layout / Pages / Components)
+* Navegación en aplicaciones SPA
+* Uso de `NavLink` para rutas activas
+* Arquitectura básica de frontend escalable
+
+---
+
+## 📌 Estado del proyecto
+
+✅ Backend funcional
+✅ API conectada
+✅ Dashboard con métricas
+✅ Gráficas implementadas
+✅ Navegación entre páginas
+✅ Layout profesional con sidebar
+
+---
+
+## 🚀 Próximos pasos (Día 14)
+
+* 📊 Implementar tablas de datos reales en cada página
+* 🔍 Añadir filtros y búsqueda
+* 🔗 Conectar más endpoints del backend
+* 📄 Mejorar visualización de listas
+
+---
+
+## 💬 Notas
+
+Este día marca un punto clave en el proyecto: se pasa de una única vista a una aplicación estructurada y escalable, sentando las bases para funcionalidades más avanzadas.
+
+---
+
+# 📅 Día 14 — Conexión completa con datos reales
+
+## 🚀 Objetivo
+
+Conectar todas las páginas del frontend con el backend para mostrar datos reales y convertir la aplicación en una herramienta funcional.
+
+---
+
+## 🧭 Trabajo realizado
+
+### 🧾 Página de Ventas (`/sales`)
+
+* Implementación de una tabla dinámica
+* Visualización de:
+
+  * ID
+  * Customer ID
+  * Product ID
+  * Amount
+* Consumo del endpoint `/sales`
+
+---
+
+### 📦 Página de Productos (`/products`)
+
+* Listado dinámico de productos
+* Visualización de:
+
+  * Nombre
+  * Precio
+* Consumo del endpoint `/products`
+
+---
+
+### 👤 Página de Clientes (`/customers`)
+
+* Tabla de clientes
+* Visualización de:
+
+  * Nombre
+  * Email
+* Consumo del endpoint `/customers`
+
+---
+
+### 🔗 Conexión con API
+
+Se centralizaron las llamadas en `api.js`:
+
+```javascript
+export const getSales = async () => {
+  const res = await fetch("http://127.0.0.1:8000/sales");
+  return res.json();
+};
+
+export const getProducts = async () => {
+  const res = await fetch("http://127.0.0.1:8000/products");
+  return res.json();
+};
+
+export const getCustomers = async () => {
+  const res = await fetch("http://127.0.0.1:8000/customers");
+  return res.json();
+};
+```
+
+---
+
+### ⏳ Manejo de estado de carga
+
+Se implementó correctamente el patrón:
+
+```javascript
+const [data, setData] = useState([]);
+const [loading, setLoading] = useState(true);
+```
+
+* `data` → almacena los datos
+* `loading` → controla el estado de carga
+
+---
+
+### 🧠 Mejora en la arquitectura
+
+* Separación clara de responsabilidades
+* Código más mantenible
+* Componentes reutilizables
+* Base sólida para escalar funcionalidades
+
+---
+
+## 🧠 Conceptos aprendidos
+
+* Consumo de APIs en React
+* Uso correcto de `useEffect`
+* Manejo de estado con `useState`
+* Renderizado condicional
+* Separación de estados (`data` vs `loading`)
+* Buenas prácticas en frontend
+
+---
+
+## 📌 Estado del proyecto
+
+✅ Backend completo y funcional
+✅ Frontend conectado al backend
+✅ Dashboard con métricas
+✅ Gráficas implementadas
+✅ Navegación entre páginas
+✅ Tablas y listas con datos reales
+
+---
+
+## 🚀 Próximos pasos (Día 15)
+
+* 🔍 Implementar búsqueda de datos
+* 📅 Añadir filtros (fechas, categorías…)
+* ⚡ Interactividad en la interfaz
+* 🎯 Mejorar experiencia de usuario
+
+---
+
+## 💬 Notas
+
+Este día marca la transición de una aplicación estática a una aplicación dinámica y funcional, capaz de consumir y mostrar datos reales en múltiples vistas.
+
+Es un paso clave hacia el desarrollo de aplicaciones completas tipo panel administrativo.
+
+---
+
 ## 👨‍💻 Autor
 
 Rafael Ecija Perez

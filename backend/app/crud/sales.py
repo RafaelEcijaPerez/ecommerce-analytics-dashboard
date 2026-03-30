@@ -1,5 +1,5 @@
 from database.db import get_connection
-
+from app.utils.mappers import map_sale, map_sale_with_names
 # CRUD operations for the Sales model
 # Create
 def crate_sale(date,product_id,customer_id,quantity,revenue):
@@ -16,91 +16,77 @@ def crate_sale(date,product_id,customer_id,quantity,revenue):
 def get_sale(sale_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE id = ?", (sale_id,))
+    cursor.execute("SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id WHERE s.id = ?", (sale_id,))
     sale = cursor.fetchone()
     cursor.close()
     conn.close()
     if sale:
-        return {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
-        }
+        return  map_sale_with_names(sale)
+        
     return None
+
 def get_sales_by_product_id(product_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE product_id = ?", (product_id,))
+    cursor.execute("SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id WHERE s.product_id = ?", (product_id,))
     sales = cursor.fetchall()
     cursor.close()
     conn.close()
     return [
-        {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
-        }
+        map_sale_with_names(sale)
         for sale in sales
     ]
 def get_sales_by_customer_id(customer_id):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE customer_id = ?", (customer_id,))
+    cursor.execute("SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id WHERE s.customer_id = ?", (customer_id,))
     sales = cursor.fetchall()
     cursor.close()
     conn.close()
     return [
-        {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
-        }
-        for sale in sales
+        
+            map_sale_with_names(sale)
+            for sale in sales
+        
+        
     ]
-def get_sales_by_date_range(start_date, end_date):
+def get_sales_by_date_range(start_date=None, end_date=None):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales WHERE date BETWEEN ? AND ?", (start_date, end_date))
+
+    query = "SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id WHERE 1=1"
+    params = []
+
+    if start_date:
+        query += " AND s.date >= ?"
+        params.append(start_date)
+
+    if end_date:
+        query += " AND s.date <= ?"
+        params.append(end_date)
+
+    cursor.execute(query, params)
     sales = cursor.fetchall()
+
     cursor.close()
     conn.close()
+
     return [
-        {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
-        }
+        map_sale_with_names(sale)
         for sale in sales
     ]
 def get_all_sales():
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT id, date, product_id, customer_id, quantity, revenue FROM sales")
+    cursor.execute("SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id")
     sales = cursor.fetchall()
     cursor.close()
     conn.close()
     return [
-        {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
-        }
-        for sale in sales
+        
+            map_sale_with_names(sale)
+            for sale in sales
+        
     ]
 # Get information about sales by product category
 def get_sales_by_product_category(category):
@@ -116,15 +102,98 @@ def get_sales_by_product_category(category):
     cursor.close()
     conn.close()
     return [
+        
+            map_sale(sale)
+            for sale in sales
+        
+    ]
+
+def get_top_products():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT p.name AS product_name, SUM(s.quantity) AS total_sold
+        FROM sales s
+        JOIN products p ON s.product_id = p.id
+        GROUP BY p.name
+        ORDER BY total_sold DESC
+        LIMIT 5
+    """)
+
+    rows = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    return [
         {
-            "id": sale["id"],
-            "date": sale["date"],
-            "product_id": sale["product_id"],
-            "customer_id": sale["customer_id"],
-            "quantity": sale["quantity"],
-            "revenue": sale["revenue"]
+            "product_name": row["product_name"],
+            "total_sold": row["total_sold"]
         }
-        for sale in sales
+        for row in rows
+    ]
+
+def get_top_customers():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT c.name AS customer_name,SUM(s.revenue) AS total_spent
+        FROM sales s
+        JOIN customers c ON s.customer_id = c.id
+        GROUP BY c.name
+        ORDER BY total_spent DESC
+        LIMIT 5
+    """)
+    top_customers = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [
+        {
+            "customer_name": customer["customer_name"],
+            "total_spent": customer["total_spent"]
+        }
+        for customer in top_customers
+    ]
+
+def get_revenue_summary():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT COUNT(*) AS total_orders, SUM(revenue) AS total_revenue, AVG(revenue) AS avg_order_value
+        FROM sales
+    """)
+    revenue_summary = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [
+        {
+            "total_orders": summary["total_orders"],
+            "total_revenue": summary["total_revenue"],
+            "avg_order_value": summary["avg_order_value"]
+        }
+        for summary in revenue_summary
+    ]
+def get_top_sales_by_category():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT p.category, SUM(s.revenue) AS total_revenue
+        FROM sales s
+        JOIN products p ON s.product_id = p.id
+        GROUP BY p.category
+        ORDER BY total_revenue DESC
+        LIMIT 5
+    """)
+    top_sales_by_category = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return [
+        {
+            "category": category["category"],
+            "total_revenue": category["total_revenue"]
+        }
+        for category in top_sales_by_category
     ]
 # Update
 def update_sale(sale_id, date=None, product_id=None, customer_id=None, quantity=None, revenue=None):
@@ -172,3 +241,4 @@ def delete_sale(sale_id):
     conn.commit()
     cursor.close()
     conn.close()
+
