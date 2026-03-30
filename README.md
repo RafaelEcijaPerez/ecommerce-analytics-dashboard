@@ -1531,6 +1531,136 @@ Este día marca un punto clave en el proyecto: se pasa de una única vista a una
 
 ---
 
+# 📅 Día 14 — Conexión completa con datos reales
+
+## 🚀 Objetivo
+
+Conectar todas las páginas del frontend con el backend para mostrar datos reales y convertir la aplicación en una herramienta funcional.
+
+---
+
+## 🧭 Trabajo realizado
+
+### 🧾 Página de Ventas (`/sales`)
+
+* Implementación de una tabla dinámica
+* Visualización de:
+
+  * ID
+  * Customer ID
+  * Product ID
+  * Amount
+* Consumo del endpoint `/sales`
+
+---
+
+### 📦 Página de Productos (`/products`)
+
+* Listado dinámico de productos
+* Visualización de:
+
+  * Nombre
+  * Precio
+* Consumo del endpoint `/products`
+
+---
+
+### 👤 Página de Clientes (`/customers`)
+
+* Tabla de clientes
+* Visualización de:
+
+  * Nombre
+  * Email
+* Consumo del endpoint `/customers`
+
+---
+
+### 🔗 Conexión con API
+
+Se centralizaron las llamadas en `api.js`:
+
+```javascript
+export const getSales = async () => {
+  const res = await fetch("http://127.0.0.1:8000/sales");
+  return res.json();
+};
+
+export const getProducts = async () => {
+  const res = await fetch("http://127.0.0.1:8000/products");
+  return res.json();
+};
+
+export const getCustomers = async () => {
+  const res = await fetch("http://127.0.0.1:8000/customers");
+  return res.json();
+};
+```
+
+---
+
+### ⏳ Manejo de estado de carga
+
+Se implementó correctamente el patrón:
+
+```javascript
+const [data, setData] = useState([]);
+const [loading, setLoading] = useState(true);
+```
+
+* `data` → almacena los datos
+* `loading` → controla el estado de carga
+
+---
+
+### 🧠 Mejora en la arquitectura
+
+* Separación clara de responsabilidades
+* Código más mantenible
+* Componentes reutilizables
+* Base sólida para escalar funcionalidades
+
+---
+
+## 🧠 Conceptos aprendidos
+
+* Consumo de APIs en React
+* Uso correcto de `useEffect`
+* Manejo de estado con `useState`
+* Renderizado condicional
+* Separación de estados (`data` vs `loading`)
+* Buenas prácticas en frontend
+
+---
+
+## 📌 Estado del proyecto
+
+✅ Backend completo y funcional
+✅ Frontend conectado al backend
+✅ Dashboard con métricas
+✅ Gráficas implementadas
+✅ Navegación entre páginas
+✅ Tablas y listas con datos reales
+
+---
+
+## 🚀 Próximos pasos (Día 15)
+
+* 🔍 Implementar búsqueda de datos
+* 📅 Añadir filtros (fechas, categorías…)
+* ⚡ Interactividad en la interfaz
+* 🎯 Mejorar experiencia de usuario
+
+---
+
+## 💬 Notas
+
+Este día marca la transición de una aplicación estática a una aplicación dinámica y funcional, capaz de consumir y mostrar datos reales en múltiples vistas.
+
+Es un paso clave hacia el desarrollo de aplicaciones completas tipo panel administrativo.
+
+---
+
 ## 👨‍💻 Autor
 
 Rafael Ecija Perez

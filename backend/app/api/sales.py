@@ -1,6 +1,7 @@
 #Ventas
 from fastapi import APIRouter, Query
 from app.crud.sales import get_sale, get_sales_by_product_id, get_sales_by_product_category, get_sales_by_date_range ,get_all_sales, crate_sale, update_sale, delete_sale, get_top_products, get_top_customers,get_top_sales_by_category,get_revenue_summary, get_sales_by_customer_id
+from typing import Optional
 router=APIRouter()
 
 @router.get("/")
@@ -40,8 +41,16 @@ def read_revenue_summary():
         "data": data
     }
 @router.get("/date-range")
-def read_sales_by_date_range(start_date: str, end_date: str):
-    data = get_sales_by_date_range(start_date, end_date)
+def read_sales_by_date_range(
+    start_date: Optional[str] = Query(None, alias="start_date"),
+    end_date: Optional[str] = Query(None, alias="end_date"),
+    start: Optional[str] = Query(None, alias="start"),
+    end: Optional[str] = Query(None, alias="end")
+):
+    # support both query param names for backward/forward compatibility
+    s = start_date or start
+    e = end_date or end
+    data = get_sales_by_date_range(s, e)
     return {
         "data": data
     }

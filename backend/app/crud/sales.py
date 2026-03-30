@@ -50,18 +50,30 @@ def get_sales_by_customer_id(customer_id):
         
         
     ]
-def get_sales_by_date_range(start_date, end_date):
+def get_sales_by_date_range(start_date=None, end_date=None):
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id WHERE s.date BETWEEN ? AND ?", (start_date, end_date))
+
+    query = "SELECT s.id, s.date, p.name as product_name, c.name as customer_name, s.quantity, s.revenue FROM sales s JOIN products p ON s.product_id = p.id JOIN customers c ON s.customer_id = c.id WHERE 1=1"
+    params = []
+
+    if start_date:
+        query += " AND s.date >= ?"
+        params.append(start_date)
+
+    if end_date:
+        query += " AND s.date <= ?"
+        params.append(end_date)
+
+    cursor.execute(query, params)
     sales = cursor.fetchall()
+
     cursor.close()
     conn.close()
+
     return [
-        
-            map_sale_with_names(sale)
-            for sale in sales
-        
+        map_sale_with_names(sale)
+        for sale in sales
     ]
 def get_all_sales():
     conn = get_connection()
